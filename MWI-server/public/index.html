@@ -1,0 +1,35 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming</title>
+</head>
+<body>
+    <h1>Select a Video to Stream</h1>
+    <ul>
+        <li><a href="/video?filename=sample.mp4">Sample Video</a></li>
+        <!-- Add more video links as needed -->
+    </ul>
+    <video id="videoPlayer" width="600" controls>
+        <source id="videoSource" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const videoUrl = this.href;
+                const videoSource = document.getElementById('videoSource');
+                const videoPlayer = document.getElementById('videoPlayer');
+                videoSource.src = videoUrl;
+                videoPlayer.load();
+                videoPlayer.play();
+            });
+        });
+    </script>
+</body>
+</html>
+

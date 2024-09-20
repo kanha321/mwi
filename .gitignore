@@ -1,0 +1,22 @@
+# Client-specific (Android Studio) ignores
+MWI-client/*.iml
+MWI-client/.gradle
+MWI-client/local.properties
+MWI-client/.idea/
+MWI-client/.DS_Store
+MWI-client/build/
+MWI-client/captures/
+MWI-client/.externalNativeBuild/
+MWI-client/.cxx/
+
+# Server-specific (VSCode) ignores
+MWI-server/*.log
+MWI-server/node_modules/
+MWI-server/public/videos/*    # Ignore all files inside the videos folder under public
+MWI-server/.vscode/           # Ignore VSCode configuration files
+
+# General ignores
+.vscode/                      # Ignore VSCode configuration files at the project root
+videos/                       # Ignore videos folder at the project root if applicable
+*.log                         # Ignore all log files globally
+.DS_Store                     # Ignore MacOS specific files
