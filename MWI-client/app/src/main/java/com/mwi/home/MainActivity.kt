@@ -8,8 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import com.kanhaji.ktemplate.ui.theme.KTemplateTheme
 import com.kanhaji.ktemplate.util.SharedPrefsManager
@@ -24,9 +22,12 @@ import com.kanhaji.ktemplate.util.sharedPrefsThemeType
 import com.kanhaji.ktemplate.util.systemTheme
 import com.kanhaji.ktemplate.util.themeHeader
 import com.kanhaji.ktemplate.util.themeType
+import com.mwi.util.autoRefresh
 import com.mwi.util.ipAddr
+import com.mwi.util.isNsfwShowing
 import com.mwi.util.updateUrl
 import com.mwi.util.url
+import com.mwi.util.videoListState
 
 //const val ip = "192.168.227.86"
 //const val url = "http://$ip:3000/videos/"
@@ -47,6 +48,9 @@ class MainActivity : ComponentActivity() {
         sharedPrefsManager = SharedPrefsManager(this)
 
         updateUrl(sharedPrefsManager.getString("ip", "172.31.93.2"))
+        isNsfwShowing = sharedPrefsManager.getBoolean("isNsfwShowing", false)
+        sharedPrefsManager.saveBoolean("isNsfwShowing", isNsfwShowing)
+
         Log.d(TAG, "onCreate: ipAddr: $ipAddr")
 
         themeType = sharedPrefsManager.getInt(sharedPrefsThemeType, ThemeType.SYSTEM.value)
@@ -78,9 +82,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             KTemplateTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    HomeScreen(context = this@MainActivity, url = url) // Pass the context and URL to the Composable
+                    HomeScreen(
+                        context = this@MainActivity,
+                        url = url
+                    ) // Pass the context and URL to the Composable
                 }
             }
+        }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        if (autoRefresh) {
+            videoListState = emptyList()
+            updateUrl(SharedPrefsManager(this).getString("ip", "172.31.93.2"))
+            getVideos(context = this, url = url) { videos ->
+                videoListState = videos
+            }
+            autoRefresh = false
         }
     }
 }

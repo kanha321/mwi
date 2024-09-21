@@ -7,8 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.kanhaji.ktemplate.util.MyToast
 import com.kanhaji.ktemplate.util.SharedPrefsManager
+import com.mwi.util.autoRefresh
 import com.mwi.util.ipAddr
 import com.mwi.util.isValidIp
+import com.mwi.util.updateUrl
 
 class SettingsViewModel(
     context: Context
@@ -21,6 +23,9 @@ class SettingsViewModel(
         private set
 
     var isIPDialogShown by mutableStateOf(false)
+        private set
+
+    var isPasswordDialogShown by mutableStateOf(false)
         private set
 
     val sharedPrefsManager = SharedPrefsManager(context = context)
@@ -45,6 +50,22 @@ class SettingsViewModel(
         isInfoDialogShown = true
     }
 
+    fun onPasswordConfirmClick(context: Context, password : String) {
+        if (password == com.mwi.util.password){
+            MyToast.show(context, "Access granted")
+        }
+        else {
+            MyToast.show(context, "Invalid password")
+        }
+        isPasswordDialogShown = false
+    }
+    fun onPasswordCancelClick() {
+        isPasswordDialogShown = false
+    }
+    fun onPasswordButtonClick() {
+        isPasswordDialogShown = true
+    }
+
     fun onIPConfirmClick(context: Context, ip : String) {
 
         var myIP = ip
@@ -52,7 +73,8 @@ class SettingsViewModel(
 
         if (isValidIp(myIP)) {
             sharedPrefsManager.saveString("ip", myIP)
-            ipAddr = myIP
+            autoRefresh = true
+            updateUrl(myIP)
             MyToast.show(context, "IP address changed to $myIP")
             isIPDialogShown = false
         }

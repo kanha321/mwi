@@ -3,13 +3,12 @@ package com.kanhaji.ktemplate.activities.settings
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -23,7 +22,10 @@ import com.kanhaji.ktemplate.util.isDynamicColor
 import com.kanhaji.ktemplate.util.sharedPrefsIsDynamicColor
 import com.kanhaji.ktemplate.util.themeHeader
 import com.mwi.R
-import com.mwi.composable.IpAddressDialog
+import com.mwi.composable.NumberInputDialog
+import com.mwi.util.autoRefresh
+import com.mwi.util.ipAddr
+import com.mwi.util.isNsfwShowing
 
 @Composable
 fun SettingsScreen(
@@ -34,20 +36,20 @@ fun SettingsScreen(
             context = context,
             title = "Settings",
         ) {
-            IconButton(
-                onClick = {
-                    viewModel.onInfoButtonClick()
-                }, modifier = Modifier
-                    .padding(12.dp)
-                    .size(24.dp)
-                    .offset((-12).dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.outline_info_24),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
+//            IconButton(
+//                onClick = {
+//                    viewModel.onInfoButtonClick()
+//                }, modifier = Modifier
+//                    .padding(12.dp)
+//                    .size(24.dp)
+//                    .offset((-12).dp)
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.outline_info_24),
+//                    contentDescription = null,
+//                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+//                )
+//            }
         }
         Spacer(modifier = Modifier.size(16.dp))
         LineHeader("Theme")
@@ -79,14 +81,29 @@ fun SettingsScreen(
                 )
             }
         )
-        KCardSingle(
-            name = "IP Address",
-            description = "Change IP Address",
-            icon = painterResource(R.drawable.outline_key_24),
-            onCardClick = {
-                viewModel.onIPButtonClick()
-            }
-        )
+//        KCardSingle(
+//            name = "IP Address",
+//            description = "Change IP Address",
+//            icon = painterResource(R.drawable.outline_key_24),
+//            onCardClick = {
+//                viewModel.onIPButtonClick()
+//            }
+//        )
+
+//        KCardSingle(
+//            name = "Mutthi Mode",
+//            description = "#MutthiWithoutInternet ✊💦",
+//            icon = painterResource(R.drawable.outline_info_24),
+//            addKSwitch = true,
+//            initialSwitchState = isNsfwShowing,
+//            onCheckedChange = {
+//                isNsfwShowing = it
+//                autoRefresh = true
+//                viewModel.sharedPrefsManager.saveBoolean(
+//                    "isNsfwShowing", isNsfwShowing
+//                )
+//            }
+//        )
     }
 
     if (viewModel.isDialogShown) {
@@ -111,13 +128,16 @@ fun SettingsScreen(
     }
 
     if (viewModel.isIPDialogShown) {
-        IpAddressDialog(
+        NumberInputDialog(
             onConfirm = { text ->
                 viewModel.onIPConfirmClick(context, text)
             },
             onDismiss = {
                 viewModel.onIPCancelClick()
             },
+            initialText = if (ipAddr == "localhost") "" else ipAddr,
+            title = "Change IP Address",
+            label = "IP Address"
         )
     }
 }

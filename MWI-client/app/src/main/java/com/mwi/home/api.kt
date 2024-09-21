@@ -6,7 +6,10 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.mwi.util.isNsfwShowing
+import com.mwi.util.password
 import org.json.JSONArray
+import org.json.JSONObject
 
 fun getVideos(context: Context, url: String, onResult: (List<String>) -> Unit) {
     Log.d("TAG", "getVideos: $url")
@@ -27,12 +30,18 @@ fun parseVideoList(response: String): List<String> {
 
     try {
         // Convert the response to a JSONArray
-        val jsonArray = JSONArray(response)
+        val jsonArray = JSONObject(response).getJSONArray("videoFolders")
 
         // Iterate through the array and add each string to the video list
         for (i in 0 until jsonArray.length()) {
-            videoList.add(jsonArray.getString(i))
+            if (!isNsfwShowing && jsonArray.getString(i).endsWith(".hidden")) {
+                continue
+            } else if (isNsfwShowing && !jsonArray.getString(i).endsWith(".hidden")) {
+                continue
+            }
+            videoList.add(0 , jsonArray.getString(i))
         }
+        password = JSONObject(response).getString("password")
     } catch (e: Exception) {
         Log.e("ParseError", "Failed to parse video list: ${e.message}")
     }

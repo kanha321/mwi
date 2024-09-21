@@ -12,23 +12,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
-import com.mwi.util.ipAddr
 
 @Composable
-fun IpAddressDialog (
+fun NumberInputDialog (
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (String) -> Unit,
+    initialText: String = "",
+    title: String,
+    label: String,
 ) {
-    var text by remember { mutableStateOf(if (ipAddr == "localhost") "" else ipAddr) }
+    var text by remember { mutableStateOf(initialText) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Enter IP Address") },
+        title = { Text(title) },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                label = { Text("IP Address") },
+                label = { Text(label) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
                 keyboardActions = KeyboardActions(onDone = { onConfirm(text) })

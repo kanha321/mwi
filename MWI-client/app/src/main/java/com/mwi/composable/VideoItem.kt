@@ -47,7 +47,7 @@ fun VideoItem(name: String, context: Context) {
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = name,
+                text = name.replace(".hidden", ""),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
